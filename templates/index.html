@@ -1,0 +1,1806 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Subjects — Grades</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg: radial-gradient(circle at 60% 20%, #2e1065 0%, #312e81 40%, #0f172a 100%),
+                linear-gradient(120deg, #0ea5e9 0%, #6366f1 60%, #0f172a 100%);
+            --muted: #b3b8d1;
+            --glass-light: rgba(255, 255, 255, 0.07);
+            --glass-strong: rgba(255, 255, 255, 0.13);
+            --card-shadow: 0 10px 30px rgba(40, 60, 120, 0.18);
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+        }
+
+        html {
+            background-color: #0f172a;
+            color: #f3f6fa;
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        html,
+        body {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100%;
+            padding: 36px 0 48px 36px;
+        }
+
+        .background-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            background: var(--bg);
+            overflow: hidden;
+        }
+
+        .background-container::before,
+        .background-container::after {
+            content: '';
+            position: absolute;
+            pointer-events: none;
+            filter: blur(70px);
+            opacity: 0.55;
+            mix-blend-mode: lighten;
+        }
+
+        .background-container::before {
+            width: 520px;
+            height: 520px;
+            left: -120px;
+            top: -80px;
+            background: radial-gradient(circle at 30% 30%, #6366f1 0%, #0ea5e9 60%, transparent 100%);
+            animation: blob1 14s ease-in-out infinite alternate;
+        }
+
+        .background-container::after {
+            width: 420px;
+            height: 420px;
+            right: -80px;
+            bottom: -80px;
+            background: radial-gradient(circle at 60% 40%, #0ea5e9 0%, #6366f1 60%, transparent 100%);
+            animation: blob2 16s ease-in-out infinite alternate;
+        }
+
+        @keyframes blob1 {
+            0% {
+                transform: scale(1) rotate(0deg);
+            }
+
+            50% {
+                transform: scale(1.08) rotate(8deg);
+            }
+
+            100% {
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        @keyframes blob2 {
+            0% {
+                transform: scale(1) rotate(0deg);
+            }
+
+            50% {
+                transform: scale(1.12) rotate(-6deg);
+            }
+
+            100% {
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        body::after {
+            width: 460px;
+            height: 460px;
+            right: -100px;
+            bottom: -100px;
+            background: radial-gradient(circle at 60% 40%, rgba(16, 185, 129, 0.18), rgba(99, 102, 241, 0.06) 40%, transparent 60%);
+            animation: floaty 12s ease-in-out infinite;
+        }
+
+        @keyframes floaty {
+            0% {
+                transform: translateY(0) rotate(0);
+            }
+
+            50% {
+                transform: translateY(-22px) rotate(6deg);
+            }
+
+            100% {
+                transform: translateY(0) rotate(0);
+            }
+        }
+
+        .page {
+            width: 720px;
+            max-width: calc(100% - 80px);
+            padding: 24px;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        h1 {
+            margin: 0 0 6px;
+            font-size: 20px;
+            color: #e8f2ff;
+        }
+
+        p.lead {
+            margin: 0 0 18px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .semester-controls {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 12px;
+            margin-bottom: 15px;
+            margin-top: -10px;
+        }
+
+        .semester-actions {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .semester-select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            padding: 10px 40px 10px 14px;
+            border-radius: 14px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.05));
+            color: #e8f2ff;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 -6px 16px rgba(2, 6, 23, 0.35), 0 8px 24px rgba(2, 6, 23, 0.45);
+            backdrop-filter: blur(12px) saturate(140%);
+            -webkit-backdrop-filter: blur(12px) saturate(140%);
+            font-weight: 700;
+            position: relative;
+            margin-right: 12px;
+            transition: box-shadow .2s ease, border-color .2s ease, transform .1s ease;
+        }
+
+        .semester-select:focus {
+            outline: none;
+            border-color: rgba(99, 102, 241, 0.6);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25), 0 10px 28px rgba(2, 6, 23, 0.55);
+            font-family: inherit;
+        }
+
+        .semester-select:hover {
+            border-color: rgba(255, 255, 255, 0.35);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), inset 0 -6px 16px rgba(2, 6, 23, 0.45), 0 10px 26px rgba(2, 6, 23, 0.55);
+        }
+
+        .save-semester-btn {
+            padding: 8px 12px;
+            border-radius: 9px;
+            border: 0;
+            background: linear-gradient(135deg, #0ea5e9, #6366f1);
+            color: #fff;
+            font-weight: 800;
+            font-size: 12.5px;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(2, 6, 23, 0.6);
+            border-bottom: 2px solid rgba(0, 0, 0, 0.12);
+        }
+
+        .subject-row {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 18px;
+            margin-bottom: 18px;
+            align-items: stretch;
+        }
+
+        .subject-card,
+        .grades-card {
+            padding: 14px 16px;
+            border-radius: 16px;
+            background: linear-gradient(120deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.04) 60%, rgba(0, 0, 0, 0.01) 100%);
+            box-shadow: 0 4px 24px 0 rgba(40, 60, 120, 0.13);
+            border: 1.5px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px) saturate(120%);
+            position: relative;
+            overflow: visible;
+            transition: background 0.3s;
+        }
+
+        .subject-card {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .subject-card .left {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .subject-card .title {
+            font-weight: 700;
+            color: #071236;
+        }
+
+        .semester-badge {
+            margin-left: auto;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: rgba(99, 102, 241, 0.2);
+            color: #c7d2fe;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .subject-card .meta {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        .subject-card::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0));
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+
+        .grades-card {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .grade-buttons {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-left: auto;
+        }
+
+        .icon-delete {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: #ef4444;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            border: 0;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(2, 6, 23, 0.6);
+        }
+
+        .grade-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 36px;
+            border-radius: 8px;
+            border: 0;
+            font-weight: 800;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(2, 6, 23, 0.6);
+            transition: transform .12s ease, box-shadow .12s ease, opacity .12s;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.12);
+        }
+
+        .grade-btn:active {
+            transform: translateY(1px);
+        }
+
+        .grade-btn[aria-pressed="true"] {
+            box-shadow: 0 8px 26px rgba(0, 0, 0, 0.6);
+            transform: translateY(-1px);
+        }
+
+        .g2 {
+            background: #ef4444;
+        }
+
+        .g3 {
+            background: #f97316;
+        }
+
+        .g4 {
+            background: #f59e0b;
+            color: #fff
+        }
+
+        .g5 {
+            background: #10b981;
+        }
+
+        .g6 {
+            background: #3b82f6;
+        }
+
+        @media (max-width:520px) {
+            .grades {
+                gap: 6px;
+            }
+
+            .grade-btn {
+                width: 36px;
+                height: 34px;
+            }
+        }
+
+        .content-wrapper {
+            display: flex;
+            align-items: flex-start;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .sidebar {
+            width: 180px;
+            flex-shrink: 0;
+        }
+
+        .average-card {
+            padding: 24px;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            text-align: center;
+        }
+
+        .average-card h2 {
+            margin: 0 0 12px;
+            font-size: 16px;
+            color: #e8f2ff;
+        }
+
+        #average-grade-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .semester-section-title {
+            margin: 24px 0 10px;
+            font-size: 16px;
+            color: #e8f2ff;
+            font-weight: 700;
+        }
+
+        .semester-card {
+            padding: 12px 14px;
+            border-radius: 14px;
+            background: linear-gradient(120deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.04) 60%, rgba(0, 0, 0, 0.01) 100%);
+            box-shadow: 0 4px 24px 0 rgba(40, 60, 120, 0.13);
+            border: 1.5px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px) saturate(120%);
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .semester-buttons {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .semester-history {
+            font-size: 14px;
+            color: #b3b8d1;
+        }
+
+        .custom-alert {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .custom-alert.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .alert-content {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px);
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .custom-alert.show .alert-content {
+            transform: scale(1) translateY(0);
+        }
+
+        .alert-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #e8f2ff;
+            margin: 0 0 16px;
+        }
+
+        .alert-message {
+            font-size: 15px;
+            color: #b3b8d1;
+            margin: 0 0 24px;
+            line-height: 1.5;
+        }
+
+        .alert-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .alert-btn {
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: 0;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 80px;
+        }
+
+        .grade-selection-container {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 16px 0;
+        }
+
+        .grade-selection-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            border: 0;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .grade-selection-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        .alert-btn-primary {
+            background: linear-gradient(135deg, #0ea5e9, #6366f1);
+            color: #fff;
+            box-shadow: 0 6px 18px rgba(14, 165, 233, 0.4);
+        }
+
+        .alert-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(14, 165, 233, 0.5);
+        }
+
+        .alert-btn-danger {
+            background: linear-gradient(135deg, #ef4444, #f97316);
+            color: #fff;
+            box-shadow: 0 6px 18px rgba(239, 68, 68, 0.4);
+        }
+
+        .alert-btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(239, 68, 68, 0.5);
+        }
+
+        .alert-btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e8f2ff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .alert-btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .file-upload {
+            display: none;
+        }
+
+        .file-upload-label {
+            display: inline-block;
+            padding: 10px 40px 10px 14px;
+            border-radius: 14px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.05));
+            color: #e8f2ff;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+                inset 0 -6px 16px rgba(2, 6, 23, 0.35),
+                0 8px 24px rgba(2, 6, 23, 0.45);
+            backdrop-filter: blur(12px) saturate(140%);
+            -webkit-backdrop-filter: blur(12px) saturate(140%);
+            font-weight: 700;
+            cursor: pointer;
+            transition: box-shadow .2s ease, border-color .2s ease, transform .1s ease;
+        }
+
+        .file-upload-label:hover {
+            border-color: rgba(255, 255, 255, 0.35);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35),
+                inset 0 -6px 16px rgba(2, 6, 23, 0.45),
+                0 10px 26px rgba(2, 6, 23, 0.55);
+        }
+
+        .file-upload-label:active {
+            transform: translateY(1px);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-container"></div>
+
+    <nav style="text-align: center; padding: 6px 0; margin-bottom: 35px; margin-top: -20px;">
+        <div
+            style="display: inline-flex; align-items: center; gap: 24px; background: rgba(255, 255, 255, 0.05); padding: 12px 24px; border-radius: 16px; backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1);">
+            <div style="font-size: 18px; font-weight: 700; color: #e8f2ff;">Grade Calculator</div>
+            <div style="display: flex; gap: 8px;">
+                <button id="tab-grades" class="nav-tab active"
+                    style="padding: 8px 16px; background: linear-gradient(135deg, #0ea5e9, #6366f1); color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Grades</button>
+                <button id="tab-work" class="nav-tab"
+                    style="padding: 8px 16px; background: rgba(255, 255, 255, 0.1); color: #b3b8d1; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; font-weight: 600; cursor: pointer;">Work</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="content-wrapper" style="margin-top: 20px;">
+        <div class="page">
+            <header>
+                <h1>Subjects (2025 - 2026)</h1>
+                <p class="lead">Tap a grade (2–6).</p>
+                <div class="semester-controls">
+                    <span style="color:#9fb0d8;">Semester:</span>
+                    <select id="semester-select" class="semester-select">
+                        <option value="1" selected>Semester I</option>
+                        <option value="2">Semester II</option>
+                    </select>
+                    <div class="semester-actions">
+                        <button id="save-semester-all" class="save-semester-btn">Save Semester</button>
+                        <button id="delete-semester-all" class="save-semester-btn"
+                            style="background: linear-gradient(135deg, #ef4444, #f97316);">Delete Semester</button>
+                    </div>
+                </div>
+            </header>
+
+            <div class="subject-row" data-subject="Mathematics">
+                <section class="subject-card">
+                    <span class="title" style="color:#fff;">Mathematics</span>
+                    <span class="semester-badge" data-semester-badge>Sem I</span>
+                </section>
+                <section class="grades-card" role="group" aria-label="Mathematics grades">
+                    <button class="icon-delete" title="Delete subject grades" data-action="delete-subject"
+                        aria-label="Delete subject">🗑️</button>
+                    <div class="grade-history" style="font-size:14px;color:#b3b8d1;"></div>
+                    <div class="grade-buttons">
+                        <button class="grade-btn g2" data-grade="2" aria-pressed="false">2</button>
+                        <button class="grade-btn g3" data-grade="3" aria-pressed="false">3</button>
+                        <button class="grade-btn g4" data-grade="4" aria-pressed="false">4</button>
+                        <button class="grade-btn g5" data-grade="5" aria-pressed="false">5</button>
+                        <button class="grade-btn g6" data-grade="6" aria-pressed="false">6</button>
+                        <button class="grade-btn" data-action="edit-grade" title="Edit last grade"
+                            aria-label="Edit grade" style="width:auto;padding:0 10px;background:#64748b;">Edit</button>
+
+                    </div>
+                </section>
+            </div>
+
+            <div class="subject-row" data-subject="Mathematics RP">
+                <section class="subject-card">
+                    <span class="title" style="color:#fff;">Mathematics RP</span>
+                    <span class="semester-badge" data-semester-badge>Sem I</span>
+                </section>
+                <section class="grades-card" role="group" aria-label="Mathematics RP grades">
+                    <button class="icon-delete" title="Delete subject grades" data-action="delete-subject"
+                        aria-label="Delete subject">🗑️</button>
+                    <div class="grade-history" style="font-size:14px;color:#b3b8d1;"></div>
+                    <div class="grade-buttons">
+                        <button class="grade-btn g2" data-grade="2" aria-pressed="false">2</button>
+                        <button class="grade-btn g3" data-grade="3" aria-pressed="false">3</button>
+                        <button class="grade-btn g4" data-grade="4" aria-pressed="false">4</button>
+                        <button class="grade-btn g5" data-grade="5" aria-pressed="false">5</button>
+                        <button class="grade-btn g6" data-grade="6" aria-pressed="false">6</button>
+                        <button class="grade-btn" data-action="edit-grade" title="Edit last grade"
+                            aria-label="Edit grade" style="width:auto;padding:0 10px;background:#64748b;">Edit</button>
+
+                    </div>
+                </section>
+            </div>
+
+            <div class="subject-row" data-subject="Bulgarian Language">
+                <section class="subject-card">
+                    <span class="title" style="color:#fff;">Bulgarian Language</span>
+                    <span class="semester-badge" data-semester-badge>Sem I</span>
+                </section>
+                <section class="grades-card" role="group" aria-label="Bulgarian Language grades">
+                    <button class="icon-delete" title="Delete subject grades" data-action="delete-subject"
+                        aria-label="Delete subject">🗑️</button>
+                    <div class="grade-history" style="font-size:14px;color:#b3b8d1;"></div>
+                    <div class="grade-buttons">
+                        <button class="grade-btn g2" data-grade="2" aria-pressed="false">2</button>
+                        <button class="grade-btn g3" data-grade="3" aria-pressed="false">3</button>
+                        <button class="grade-btn g4" data-grade="4" aria-pressed="false">4</button>
+                        <button class="grade-btn g5" data-grade="5" aria-pressed="false">5</button>
+                        <button class="grade-btn g6" data-grade="6" aria-pressed="false">6</button>
+                        <button class="grade-btn" data-action="edit-grade" title="Edit last grade"
+                            aria-label="Edit grade" style="width:auto;padding:0 10px;background:#64748b;">Edit</button>
+
+                    </div>
+                </section>
+            </div>
+
+            <div class="subject-row" data-subject="CHEP">
+                <section class="subject-card">
+                    <span class="title" style="color:#fff;">CHEP</span>
+                    <span class="semester-badge" data-semester-badge>Sem I</span>
+                </section>
+                <section class="grades-card" role="group" aria-label="CHEP grades">
+                    <button class="icon-delete" title="Delete subject grades" data-action="delete-subject"
+                        aria-label="Delete subject">🗑️</button>
+                    <div class="grade-history" style="font-size:14px;color:#b3b8d1;"></div>
+                    <div class="grade-buttons">
+                        <button class="grade-btn g2" data-grade="2" aria-pressed="false">2</button>
+                        <button class="grade-btn g3" data-grade="3" aria-pressed="false">3</button>
+                        <button class="grade-btn g4" data-grade="4" aria-pressed="false">4</button>
+                        <button class="grade-btn g5" data-grade="5" aria-pressed="false">5</button>
+                        <button class="grade-btn g6" data-grade="6" aria-pressed="false">6</button>
+                        <button class="grade-btn" data-action="edit-grade" title="Edit last grade"
+                            aria-label="Edit grade" style="width:auto;padding:0 10px;background:#64748b;">Edit</button>
+
+                    </div>
+                </section>
+            </div>
+
+            <div class="subject-row" data-subject="VMKS Coding">
+                <section class="subject-card">
+                    <span class="title" style="color:#fff;">VMKS Coding</span>
+                    <span class="semester-badge" data-semester-badge>Sem I</span>
+                </section>
+                <section class="grades-card" role="group" aria-label="VMKS Coding grades">
+                    <button class="icon-delete" title="Delete subject grades" data-action="delete-subject"
+                        aria-label="Delete subject">🗑️</button>
+                    <div class="grade-history" style="font-size:14px;color:#b3b8d1;"></div>
+                    <div class="grade-buttons">
+                        <button class="grade-btn g2" data-grade="2" aria-pressed="false">2</button>
+                        <button class="grade-btn g3" data-grade="3" aria-pressed="false">3</button>
+                        <button class="grade-btn g4" data-grade="4" aria-pressed="false">4</button>
+                        <button class="grade-btn g5" data-grade="5" aria-pressed="false">5</button>
+                        <button class="grade-btn g6" data-grade="6" aria-pressed="false">6</button>
+                        <button class="grade-btn" data-action="edit-grade" title="Edit last grade"
+                            aria-label="Edit grade" style="width:auto;padding:0 10px;background:#64748b;">Edit</button>
+
+                    </div>
+                </section>
+            </div>
+
+            <div class="subject-row" data-subject="VMKS Coding SP">
+                <section class="subject-card">
+                    <span class="title" style="color:#fff;">VMKS Coding SP</span>
+                    <span class="semester-badge" data-semester-badge>Sem I</span>
+                </section>
+                <section class="grades-card" role="group" aria-label="VMKS Coding SP grades">
+                    <button class="icon-delete" title="Delete subject grades" data-action="delete-subject"
+                        aria-label="Delete subject">🗑️</button>
+                    <div class="grade-history" style="font-size:14px;color:#b3b8d1;"></div>
+                    <div class="grade-buttons">
+                        <button class="grade-btn g2" data-grade="2" aria-pressed="false">2</button>
+                        <button class="grade-btn g3" data-grade="3" aria-pressed="false">3</button>
+                        <button class="grade-btn g4" data-grade="4" aria-pressed="false">4</button>
+                        <button class="grade-btn g5" data-grade="5" aria-pressed="false">5</button>
+                        <button class="grade-btn g6" data-grade="6" aria-pressed="false">6</button>
+                        <button class="grade-btn" data-action="edit-grade" title="Edit last grade"
+                            aria-label="Edit grade" style="width:auto;padding:0 10px;background:#64748b;">Edit</button>
+
+                    </div>
+                </section>
+            </div>
+
+            <div class="subject-row" data-subject="UI Design">
+                <section class="subject-card">
+                    <span class="title" style="color:#fff;">UI Design</span>
+                    <span class="semester-badge" data-semester-badge>Sem I</span>
+                </section>
+                <section class="grades-card" role="group" aria-label="UI Design grades">
+                    <button class="icon-delete" title="Delete subject grades" data-action="delete-subject"
+                        aria-label="Delete subject">🗑️</button>
+                    <div class="grade-history" style="font-size:14px;color:#b3b8d1;"></div>
+                    <div class="grade-buttons">
+                        <button class="grade-btn g2" data-grade="2" aria-pressed="false">2</button>
+                        <button class="grade-btn g3" data-grade="3" aria-pressed="false">3</button>
+                        <button class="grade-btn g4" data-grade="4" aria-pressed="false">4</button>
+                        <button class="grade-btn g5" data-grade="5" aria-pressed="false">5</button>
+                        <button class="grade-btn g6" data-grade="6" aria-pressed="false">6</button>
+                        <button class="grade-btn" data-action="edit-grade" title="Edit last grade"
+                            aria-label="Edit grade" style="width:auto;padding:0 10px;background:#64748b;">Edit</button>
+                    </div>
+                </section>
+            </div>
+
+            <div class="subject-row" data-subject="IoT">
+                <section class="subject-card">
+                    <span class="title" style="color:#fff;">IoT</span>
+                    <span class="semester-badge" data-semester-badge>Sem I</span>
+                </section>
+                <section class="grades-card" role="group" aria-label="IoT grades">
+                    <button class="icon-delete" title="Delete subject grades" data-action="delete-subject"
+                        aria-label="Delete subject">🗑️</button>
+                    <div class="grade-history" style="font-size:14px;color:#b3b8d1;"></div>
+                    <div class="grade-buttons">
+                        <button class="grade-btn g2" data-grade="2" aria-pressed="false">2</button>
+                        <button class="grade-btn g3" data-grade="3" aria-pressed="false">3</button>
+                        <button class="grade-btn g4" data-grade="4" aria-pressed="false">4</button>
+                        <button class="grade-btn g5" data-grade="5" aria-pressed="false">5</button>
+                        <button class="grade-btn g6" data-grade="6" aria-pressed="false">6</button>
+                        <button class="grade-btn" data-action="edit-grade" title="Edit last grade"
+                            aria-label="Edit grade" style="width:auto;padding:0 10px;background:#64748b;">Edit</button>
+
+                    </div>
+                </section>
+            </div>
+
+            <div class="subject-row" data-subject="IoT SP">
+                <section class="subject-card">
+                    <span class="title" style="color:#fff;">IoT SP</span>
+                    <span class="semester-badge" data-semester-badge>Sem I</span>
+                </section>
+                <section class="grades-card" role="group" aria-label="IoT SP grades">
+                    <button class="icon-delete" title="Delete subject grades" data-action="delete-subject"
+                        aria-label="Delete subject">🗑️</button>
+                    <div class="grade-history" style="font-size:14px;color:#b3b8d1;"></div>
+                    <div class="grade-buttons">
+                        <button class="grade-btn g2" data-grade="2" aria-pressed="false">2</button>
+                        <button class="grade-btn g3" data-grade="3" aria-pressed="false">3</button>
+                        <button class="grade-btn g4" data-grade="4" aria-pressed="false">4</button>
+                        <button class="grade-btn g5" data-grade="5" aria-pressed="false">5</button>
+                        <button class="grade-btn g6" data-grade="6" aria-pressed="false">6</button>
+                        <button class="grade-btn" data-action="edit-grade" title="Edit last grade"
+                            aria-label="Edit grade" style="width:auto;padding:0 10px;background:#64748b;">Edit</button>
+
+                    </div>
+                </section>
+            </div>
+
+            <div class="subject-row" data-subject="Citizen Education">
+                <section class="subject-card">
+                    <span class="title" style="color:#fff;">Citizen Education</span>
+                    <span class="semester-badge" data-semester-badge>Sem I</span>
+                </section>
+                <section class="grades-card" role="group" aria-label="Citizen Education grades">
+                    <button class="icon-delete" title="Delete subject grades" data-action="delete-subject"
+                        aria-label="Delete subject">🗑️</button>
+                    <div class="grade-history" style="font-size:14px;color:#b3b8d1;"></div>
+                    <div class="grade-buttons">
+                        <button class="grade-btn g2" data-grade="2" aria-pressed="false">2</button>
+                        <button class="grade-btn g3" data-grade="3" aria-pressed="false">3</button>
+                        <button class="grade-btn g4" data-grade="4" aria-pressed="false">4</button>
+                        <button class="grade-btn g5" data-grade="5" aria-pressed="false">5</button>
+                        <button class="grade-btn g6" data-grade="6" aria-pressed="false">6</button>
+                        <button class="grade-btn" data-action="edit-grade" title="Edit last grade"
+                            aria-label="Edit grade" style="width:auto;padding:0 10px;background:#64748b;">Edit</button>
+
+                    </div>
+                </section>
+            </div>
+
+            <div class="subject-row" data-subject="Software Engineering">
+                <section class="subject-card">
+                    <span class="title" style="color:#fff;">Software Engineering</span>
+                    <span class="semester-badge" data-semester-badge>Sem I</span>
+                </section>
+                <section class="grades-card" role="group" aria-label="Software Engineering grades">
+                    <button class="icon-delete" title="Delete subject grades" data-action="delete-subject"
+                        aria-label="Delete subject">🗑️</button>
+                    <div class="grade-history" style="font-size:14px;color:#b3b8d1;"></div>
+                    <div class="grade-buttons">
+                        <button class="grade-btn g2" data-grade="2" aria-pressed="false">2</button>
+                        <button class="grade-btn g3" data-grade="3" aria-pressed="false">3</button>
+                        <button class="grade-btn g4" data-grade="4" aria-pressed="false">4</button>
+                        <button class="grade-btn g5" data-grade="5" aria-pressed="false">5</button>
+                        <button class="grade-btn g6" data-grade="6" aria-pressed="false">6</button>
+                        <button class="grade-btn" data-action="edit-grade" title="Edit last grade"
+                            aria-label="Edit grade" style="width:auto;padding:0 10px;background:#64748b;">Edit</button>
+
+                    </div>
+                </section>
+            </div>
+
+            <div class="subject-row" data-subject="Software Engineering SP">
+                <section class="subject-card">
+                    <span class="title" style="color:#fff;">Software Engineering SP</span>
+                    <span class="semester-badge" data-semester-badge>Sem I</span>
+                </section>
+                <section class="grades-card" role="group" aria-label="Software Engineering SP grades">
+                    <button class="icon-delete" title="Delete subject grades" data-action="delete-subject"
+                        aria-label="Delete subject">🗑️</button>
+                    <div class="grade-history" style="font-size:14px;color:#b3b8d1;"></div>
+                    <div class="grade-buttons">
+                        <button class="grade-btn g2" data-grade="2" aria-pressed="false">2</button>
+                        <button class="grade-btn g3" data-grade="3" aria-pressed="false">3</button>
+                        <button class="grade-btn g4" data-grade="4" aria-pressed="false">4</button>
+                        <button class="grade-btn g5" data-grade="5" aria-pressed="false">5</button>
+                        <button class="grade-btn g6" data-grade="6" aria-pressed="false">6</button>
+                        <button class="grade-btn" data-action="edit-grade" title="Edit last grade"
+                            aria-label="Edit grade" style="width:auto;padding:0 10px;background:#64748b;">Edit</button>
+
+                    </div>
+                </section>
+            </div>
+
+            <div class="subject-row" data-subject="Internet Coding">
+                <section class="subject-card">
+                    <span class="title" style="color:#fff;">Internet Coding</span>
+                    <span class="semester-badge" data-semester-badge>Sem I</span>
+                </section>
+                <section class="grades-card" role="group" aria-label="Internet Coding grades">
+                    <button class="icon-delete" title="Delete subject grades" data-action="delete-subject"
+                        aria-label="Delete subject">🗑️</button>
+                    <div class="grade-history" style="font-size:14px;color:#b3b8d1;"></div>
+                    <div class="grade-buttons">
+                        <button class="grade-btn g2" data-grade="2" aria-pressed="false">2</button>
+                        <button class="grade-btn g3" data-grade="3" aria-pressed="false">3</button>
+                        <button class="grade-btn g4" data-grade="4" aria-pressed="false">4</button>
+                        <button class="grade-btn g5" data-grade="5" aria-pressed="false">5</button>
+                        <button class="grade-btn g6" data-grade="6" aria-pressed="false">6</button>
+                        <button class="grade-btn" data-action="edit-grade" title="Edit last grade"
+                            aria-label="Edit grade" style="width:auto;padding:0 10px;background:#64748b;">Edit</button>
+
+                    </div>
+                </section>
+            </div>
+
+            <div class="subject-row" data-subject="Internet Coding SP">
+                <section class="subject-card">
+                    <span class="title" style="color:#fff;">Internet Coding SP</span>
+                    <span class="semester-badge" data-semester-badge>Sem I</span>
+                </section>
+                <section class="grades-card" role="group" aria-label="Internet Coding SP grades">
+                    <button class="icon-delete" title="Delete subject grades" data-action="delete-subject"
+                        aria-label="Delete subject">🗑️</button>
+                    <div class="grade-history" style="font-size:14px;color:#b3b8d1;"></div>
+                    <div class="grade-buttons">
+                        <button class="grade-btn g2" data-grade="2" aria-pressed="false">2</button>
+                        <button class="grade-btn g3" data-grade="3" aria-pressed="false">3</button>
+                        <button class="grade-btn g4" data-grade="4" aria-pressed="false">4</button>
+                        <button class="grade-btn g5" data-grade="5" aria-pressed="false">5</button>
+                        <button class="grade-btn g6" data-grade="6" aria-pressed="false">6</button>
+                        <button class="grade-btn" data-action="edit-grade" title="Edit last grade"
+                            aria-label="Edit grade" style="width:auto;padding:0 10px;background:#64748b;">Edit</button>
+
+                    </div>
+                </section>
+            </div>
+
+            <div class="subject-row" data-subject="Computer Graphics">
+                <section class="subject-card">
+                    <span class="title" style="color:#fff;">Computer Graphics</span>
+                    <span class="semester-badge" data-semester-badge>Sem I</span>
+                </section>
+                <section class="grades-card" role="group" aria-label="Computer Graphics grades">
+                    <button class="icon-delete" title="Delete subject grades" data-action="delete-subject"
+                        aria-label="Delete subject">🗑️</button>
+                    <div class="grade-history" style="font-size:14px;color:#b3b8d1;"></div>
+                    <div class="grade-buttons">
+                        <button class="grade-btn g2" data-grade="2" aria-pressed="false">2</button>
+                        <button class="grade-btn g3" data-grade="3" aria-pressed="false">3</button>
+                        <button class="grade-btn g4" data-grade="4" aria-pressed="false">4</button>
+                        <button class="grade-btn g5" data-grade="5" aria-pressed="false">5</button>
+                        <button class="grade-btn g6" data-grade="6" aria-pressed="false">6</button>
+                        <button class="grade-btn" data-action="edit-grade" title="Edit last grade"
+                            aria-label="Edit grade" style="width:auto;padding:0 10px;background:#64748b;">Edit</button>
+
+                    </div>
+                </section>
+            </div>
+
+            <div class="subject-row" data-subject="Computer Graphics SP">
+                <section class="subject-card">
+                    <span class="title" style="color:#fff;">Computer Graphics SP</span>
+                    <span class="semester-badge" data-semester-badge>Sem I</span>
+                </section>
+                <section class="grades-card" role="group" aria-label="Computer Graphics SP grades">
+                    <button class="icon-delete" title="Delete subject grades" data-action="delete-subject"
+                        aria-label="Delete subject">🗑️</button>
+                    <div class="grade-history" style="font-size:14px;color:#b3b8d1;"></div>
+                    <div class="grade-buttons">
+                        <button class="grade-btn g2" data-grade="2" aria-pressed="false">2</button>
+                        <button class="grade-btn g3" data-grade="3" aria-pressed="false">3</button>
+                        <button class="grade-btn g4" data-grade="4" aria-pressed="false">4</button>
+                        <button class="grade-btn g5" data-grade="5" aria-pressed="false">5</button>
+                        <button class="grade-btn g6" data-grade="6" aria-pressed="false">6</button>
+                        <button class="grade-btn" data-action="edit-grade" title="Edit last grade"
+                            aria-label="Edit grade" style="width:auto;padding:0 10px;background:#64748b;">Edit</button>
+                    </div>
+                </section>
+            </div>
+
+             <div class="subject-row" data-subject="PE">
+                <section class="subject-card">
+                    <span class="title" style="color:#fff;">PE</span>
+                    <span class="semester-badge" data-semester-badge>Sem I</span>
+                </section>
+                <section class="grades-card" role="group" aria-label="PE grades">
+                    <button class="icon-delete" title="Delete subject grades" data-action="delete-subject"
+                        aria-label="Delete subject">🗑️</button>
+                    <div class="grade-history" style="font-size:14px;color:#b3b8d1;"></div>
+                    <div class="grade-buttons">
+                        <button class="grade-btn g2" data-grade="2" aria-pressed="false">2</button>
+                        <button class="grade-btn g3" data-grade="3" aria-pressed="false">3</button>
+                        <button class="grade-btn g4" data-grade="4" aria-pressed="false">4</button>
+                        <button class="grade-btn g5" data-grade="5" aria-pressed="false">5</button>
+                        <button class="grade-btn g6" data-grade="6" aria-pressed="false">6</button>
+                        <button class="grade-btn" data-action="edit-grade" title="Edit last grade"
+                            aria-label="Edit grade" style="width:auto;padding:0 10px;background:#64748b;">Edit</button>
+
+                    </div>
+                </section>
+            </div>
+        </div>
+        <div class="sidebar">
+            <div class="average-card">
+                <h2>Average Grade</h2>
+                <div id="average-grade-value">--</div>
+                <div style="margin-top:12px;font-size:13px;color:#b3b8d1;">Semester I Avg: <span id="sem1-avg">--</span>
+                </div>
+                <div style="margin-top:6px;font-size:13px;color:#b3b8d1;">Semester II Avg: <span id="sem2-avg">--</span>
+                </div>
+            </div>
+
+            <div class="average-card" style="margin-top: 16px;">
+                <h2>Final Semester I</h2>
+                <div id="sem1-final" style="font-size: 36px; font-weight: 700; color: #fff;">--</div>
+            </div>
+
+            <div class="average-card" style="margin-top: 16px;">
+                <h2>Final Semester II</h2>
+                <div id="sem2-final" style="font-size: 36px; font-weight: 700; color: #fff;">--</div>
+            </div>
+
+        </div>
+    </div>
+
+    <div
+        style="position: absolute; top: 121px; right: 120px; width: 280px; display: flex; flex-direction: column; gap: 16px;">
+        <div class="average-card">
+            <h2>Final Year</h2>
+            <div id="final-year" style="font-size: 36px; font-weight: 700; color: #fff;">--</div>
+        </div>
+        <div class="average-card" id="assistant-card">
+            <h2>Smart Assistant</h2>
+            <div id="assistant-content"
+                style="font-size: 13px; color: #b3b8d1; line-height: 1.5; max-height: 120px; overflow: hidden;">No data
+                yet.</div>
+            <button id="show-full-assistant"
+                style="margin-top: 8px; padding: 6px 12px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: #b3b8d1; font-size: 12px; cursor: pointer; display: none;">Show
+                More</button>
+        </div>
+    </div>
+
+    <div id="custom-alert" class="custom-alert">
+        <div class="alert-content">
+            <div class="alert-title" id="alert-title">Alert</div>
+            <div class="alert-message" id="alert-message">Message</div>
+            <div class="alert-buttons" id="alert-buttons">
+                <button class="alert-btn alert-btn-primary" id="alert-ok">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <div
+        style="width: 100%; padding: 24px 36px 48px 36px; box-sizing: border-box; margin: 24px auto 0; display: flex; justify-content: center;">
+        <div class="average-card" style="max-width: 1100px; margin: 0 auto;">
+            <h2 style="text-align:center; margin-bottom:16px;">Grade Trends</h2>
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px;">
+                <div>
+                    <div style="font-size:13px;color:#b3b8d1; margin-bottom:6px;">Semester I</div>
+                    <canvas id="chart-sem1" height="100"></canvas>
+                </div>
+                <div>
+                    <div style="font-size:13px;color:#b3b8d1; margin-bottom:6px;">Semester II</div>
+                    <canvas id="chart-sem2" height="100"></canvas>
+                </div>
+                <div>
+                    <div style="font-size:13px;color:#b3b8d1; margin-bottom:6px;">Full Year</div>
+                    <canvas id="chart-year" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function baseOrigin() {
+            try {
+                if (location && location.origin && !location.origin.startsWith('file')) return location.origin;
+            } catch (e) { }
+            return '';
+        }
+
+        function showAlert(title, message, type = 'info', onConfirm = null, onCancel = null) {
+            const alert = document.getElementById('custom-alert');
+            const alertTitle = document.getElementById('alert-title');
+            const alertMessage = document.getElementById('alert-message');
+            const alertButtons = document.getElementById('alert-buttons');
+
+            alertTitle.textContent = title;
+            alertMessage.textContent = message;
+
+            alertButtons.innerHTML = '';
+
+            if (type === 'confirm') {
+                const confirmBtn = document.createElement('button');
+                confirmBtn.className = 'alert-btn alert-btn-primary';
+                confirmBtn.textContent = 'Confirm';
+                confirmBtn.onclick = () => {
+                    hideAlert();
+                    if (onConfirm) onConfirm();
+                };
+
+                const cancelBtn = document.createElement('button');
+                cancelBtn.className = 'alert-btn alert-btn-secondary';
+                cancelBtn.textContent = 'Cancel';
+                cancelBtn.onclick = () => {
+                    hideAlert();
+                    if (onCancel) onCancel();
+                };
+
+                alertButtons.appendChild(confirmBtn);
+                alertButtons.appendChild(cancelBtn);
+            } else {
+                const okBtn = document.createElement('button');
+                okBtn.className = type === 'error' ? 'alert-btn alert-btn-danger' : 'alert-btn alert-btn-primary';
+                okBtn.textContent = 'OK';
+                okBtn.onclick = () => {
+                    hideAlert();
+                    if (onConfirm) onConfirm();
+                };
+                alertButtons.appendChild(okBtn);
+            }
+
+            alert.classList.add('show');
+        }
+
+        function hideAlert() {
+            const alert = document.getElementById('custom-alert');
+            alert.classList.remove('show');
+        }
+
+        function customAlert(message) {
+            showAlert('Alert', message, 'info');
+        }
+
+        function customConfirm(message, onConfirm, onCancel) {
+            showAlert('Confirm', message, 'confirm', onConfirm, onCancel);
+        }
+
+        async function refreshSummary() {
+            try {
+                const res = await fetch(baseOrigin() + '/grades');
+                if (!res.ok) { console.error('fetch grades failed', res.status); return; }
+                const data = await res.json();
+                const currentSem = document.getElementById('semester-select')?.value || '1';
+                const allPerSubject = {};
+                const allGrades = [];
+                (data.entries || []).forEach(e => {
+                    if (!allPerSubject[e.subject]) allPerSubject[e.subject] = [];
+                    if (e.type === 'semester') return;
+                    if (e.semester != null && String(e.semester) !== String(currentSem)) return;
+                    allPerSubject[e.subject].push(e.grade);
+                    allGrades.push(parseFloat(e.grade));
+                });
+                document.querySelectorAll('.subject-row').forEach(row => {
+                    const subj = row.dataset.subject;
+                    const gradeCard = row.querySelector('.grades-card');
+                    const historyDiv = gradeCard.querySelector('.grade-history');
+                    const grades = allPerSubject[subj] || [];
+                    if (historyDiv) {
+                        historyDiv.textContent = grades.length ? grades.join(', ') : '';
+                    }
+                });
+
+                const averageDiv = document.getElementById('average-grade-value');
+                if (allGrades.length > 0) {
+                    const sum = allGrades.reduce((a, b) => a + b, 0);
+                    const avg = (sum / allGrades.length).toFixed(2);
+                    averageDiv.textContent = avg;
+                } else {
+                    averageDiv.textContent = '--';
+                }
+
+                const runningSem = { '1': [], '2': [] };
+                (data.entries || []).forEach(e => {
+                    if (e.type === 'regular' && (e.semester === 1 || e.semester === 2 || e.semester === '1' || e.semester === '2')) {
+                        runningSem[String(e.semester)].push(Number(e.grade));
+                    }
+                });
+                function avgOf(arr) { if (!arr.length) return null; return arr.reduce((a, b) => a + b, 0) / arr.length; }
+                const running1 = avgOf(runningSem['1']);
+                const running2 = avgOf(runningSem['2']);
+
+                const sem1Avg = document.getElementById('sem1-avg');
+                const sem2Avg = document.getElementById('sem2-avg');
+                if (sem1Avg) sem1Avg.textContent = running1 != null ? running1.toFixed(2) : '--';
+                if (sem2Avg) sem2Avg.textContent = running2 != null ? running2.toFixed(2) : '--';
+
+                const semA = (data.semesterAverages || {});
+                const sem1Final = document.getElementById('sem1-final');
+                const sem2Final = document.getElementById('sem2-final');
+                if (sem1Final) sem1Final.textContent = semA['1'] != null ? Number(semA['1']).toFixed(2) : '--';
+                if (sem2Final) sem2Final.textContent = semA['2'] != null ? Number(semA['2']).toFixed(2) : '--';
+
+                const fyEl = document.getElementById('final-year');
+                const fyVal = (semA['1'] != null && semA['2'] != null) ? ((semA['1'] + semA['2']) / 2).toFixed(2) : '--';
+                if (fyEl) fyEl.textContent = fyVal;
+
+                const assistant = document.getElementById('assistant-content');
+                const showMoreBtn = document.getElementById('show-full-assistant');
+                if (assistant) {
+                    const bySubject = {};
+                    (data.entries || []).forEach(e => {
+                        if (e.type === 'regular' && (e.semester === 1 || e.semester === 2 || e.semester === '1' || e.semester === '2')) {
+                            const key = e.subject + '::' + String(e.semester);
+                            if (!bySubject[key]) bySubject[key] = [];
+                            bySubject[key].push(Number(e.grade));
+                        }
+                    });
+                    const lines = [];
+                    Object.keys(bySubject).forEach(key => {
+                        const [subject, sem] = key.split('::');
+                        const grades = bySubject[key];
+                        if (!grades.length) return;
+                        const avg = grades.reduce((a, b) => a + b, 0) / grades.length;
+                        const minG = Math.min.apply(null, grades);
+                        const maxG = Math.max.apply(null, grades);
+                        const volatility = (maxG - minG).toFixed(2);
+                        const mid = Math.floor(grades.length / 2) || 1;
+                        const firstAvg = grades.slice(0, mid).reduce((a, b) => a + b, 0) / Math.max(1, grades.slice(0, mid).length);
+                        const secondAvg = grades.slice(mid).reduce((a, b) => a + b, 0) / Math.max(1, grades.slice(mid).length);
+                        const trend = secondAvg - firstAvg;
+
+                        if (avg < 3.5) {
+                            lines.push(subject + ' (Sem ' + sem + '): Focus — low avg ' + avg.toFixed(2));
+                        } else if (avg < 4.5) {
+                            lines.push(subject + ' (Sem ' + sem + '): Could improve — avg ' + avg.toFixed(2));
+                        } else if (grades.length >= 3) {
+                            lines.push(subject + ' (Sem ' + sem + '): Strong — avg ' + avg.toFixed(2));
+                        }
+                        if (volatility >= 2) {
+                            lines.push(subject + ' (Sem ' + sem + '): Inconsistent — volatility ' + volatility);
+                        }
+                        if (trend > 0.25) {
+                            lines.push(subject + ' (Sem ' + sem + '): Trending up (' + firstAvg.toFixed(2) + ' → ' + secondAvg.toFixed(2) + ')');
+                        } else if (trend < -0.25) {
+                            lines.push(subject + ' (Sem ' + sem + '): Trending down (' + firstAvg.toFixed(2) + ' → ' + secondAvg.toFixed(2) + ')');
+                        }
+                        const target = 5.0;
+                        if (avg < target && grades.length >= 2) {
+                            const needed = Math.max(2, Math.ceil((target * (grades.length + 1) - grades.reduce((a, b) => a + b, 0))));
+                            lines.push(subject + ' (Sem ' + sem + '): Aim for ' + needed + ' to reach ' + target.toFixed(1));
+                        }
+                        if (grades.length < 2) {
+                            lines.push(subject + ' (Sem ' + sem + '): Add ' + (2 - grades.length) + ' more grade(s) to finalize');
+                        }
+                    });
+                    const fullText = lines.length ? lines.join('\n') : 'No suggestions yet. Add grades to see insights.';
+                    assistant.textContent = fullText;
+
+                    if (showMoreBtn) {
+                        if (fullText.length > 100) {
+                            showMoreBtn.style.display = 'block';
+                            showMoreBtn.onclick = () => {
+                                showAlert('Smart Assistant', fullText, 'info');
+                            };
+                        } else {
+                            showMoreBtn.style.display = 'none';
+                        }
+                    }
+                }
+
+                const latestSemSelections = { '1': {}, '2': {} };
+                const regularGradesBySem = { '1': {}, '2': {} };
+
+                (data.entries || []).forEach(e => {
+                    if (e.type === 'semester' && (e.semester === 1 || e.semester === 2 || e.semester === '1' || e.semester === '2')) {
+                        const semKey = String(e.semester);
+                        latestSemSelections[semKey][e.subject] = Number(e.grade);
+                    } else if (e.type === 'regular' && (e.semester === 1 || e.semester === 2 || e.semester === '1' || e.semester === '2')) {
+                        const semKey = String(e.semester);
+                        if (!regularGradesBySem[semKey][e.subject]) regularGradesBySem[semKey][e.subject] = [];
+                        regularGradesBySem[semKey][e.subject].push(Number(e.grade));
+                    }
+                });
+
+                ['1', '2'].forEach(k => {
+                    if (Object.keys(latestSemSelections[k]).length > 0) {
+                        semesterSelections[k] = Object.assign({}, latestSemSelections[k]);
+                    } else {
+                        const latestRegular = {};
+                        Object.keys(regularGradesBySem[k]).forEach(subject => {
+                            const grades = regularGradesBySem[k][subject];
+                            if (grades.length > 0) {
+                                latestRegular[subject] = grades[grades.length - 1];
+                            }
+                        });
+                        semesterSelections[k] = latestRegular;
+                    }
+                });
+
+                document.querySelectorAll('.subject-row').forEach(row => {
+                    const subj = row.dataset.subject;
+                    const grade = semesterSelections[currentSem][subj];
+                    setSelectedButtonForRow(row, grade);
+                });
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        const semesterSelections = { '1': {}, '2': {} };
+
+        function setSelectedButtonForRow(row, grade) {
+            const gradeButtons = row.querySelectorAll('.grade-btn[data-grade]');
+            gradeButtons.forEach(b => b.setAttribute('aria-pressed', 'false'));
+            const toPress = Array.from(gradeButtons).find(b => b.dataset.grade == String(grade));
+            if (toPress) {
+                toPress.setAttribute('aria-pressed', 'true');
+                row.dataset.selected = String(grade);
+            } else {
+                delete row.dataset.selected;
+            }
+        }
+
+        document.querySelectorAll('.subject-row').forEach(row => {
+            const gradeCard = row.querySelector('.grades-card');
+            const gradeButtons = gradeCard.querySelectorAll('.grade-btn[data-grade]');
+
+            gradeButtons.forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    gradeButtons.forEach(b => b.setAttribute('aria-pressed', 'false'));
+                    btn.setAttribute('aria-pressed', 'true');
+                    row.dataset.selected = btn.dataset.grade;
+
+                    try {
+                        const currentSem = document.getElementById('semester-select')?.value || '1';
+                        const payload = { subject: row.dataset.subject, grade: btn.dataset.grade, semester: Number(currentSem) };
+                        const res = await fetch(baseOrigin() + '/save-grade', {
+                            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+                        });
+                        if (res.ok) {
+                            await refreshSummary();
+                        } else {
+                            const txt = await res.text();
+                            console.error('save failed', txt);
+                            customAlert('Save failed: ' + (txt || res.status));
+                        }
+                    } catch (e) { console.error(e); customAlert('Network error') }
+
+                    const sem = document.getElementById('semester-select')?.value || '1';
+                    semesterSelections[sem] = Object.assign({}, semesterSelections[sem], { [row.dataset.subject]: Number(btn.dataset.grade) });
+                });
+            });
+        });
+
+        const semesterSelectEl = document.getElementById('semester-select');
+        function updateSemesterBadges(currentSem) {
+            const label = currentSem === '2' ? 'Sem II' : 'Sem I';
+            document.querySelectorAll('[data-semester-badge]').forEach(el => { el.textContent = label; });
+        }
+
+        if (semesterSelectEl) {
+            semesterSelectEl.addEventListener('change', async () => {
+                const sem = semesterSelectEl.value;
+                updateSemesterBadges(sem);
+                await refreshSummary();
+                document.querySelectorAll('.subject-row').forEach(row => {
+                    const subj = row.dataset.subject;
+                    const grade = semesterSelections[sem][subj];
+                    setSelectedButtonForRow(row, grade);
+                });
+            });
+            updateSemesterBadges(semesterSelectEl.value);
+        }
+
+        const saveAllBtn = document.getElementById('save-semester-all');
+        if (saveAllBtn && semesterSelectEl) {
+            saveAllBtn.addEventListener('click', async () => {
+                const sem = Number(semesterSelectEl.value);
+                const payloads = [];
+
+                let existingSemesterGrades = {};
+                let existingRegularGrades = {};
+                try {
+                    const res = await fetch(baseOrigin() + '/grades');
+                    if (res.ok) {
+                        const data = await res.json();
+                        (data.entries || []).forEach(e => {
+                            if (e.type === 'semester' && e.semester === sem) {
+                                existingSemesterGrades[e.subject] = Number(e.grade);
+                            } else if (e.type === 'regular' && e.semester === sem) {
+                                if (!existingRegularGrades[e.subject]) existingRegularGrades[e.subject] = [];
+                                existingRegularGrades[e.subject].push(Number(e.grade));
+                            }
+                        });
+                    }
+                } catch (e) { }
+
+                document.querySelectorAll('.subject-row').forEach(row => {
+                    const subj = row.dataset.subject;
+                    let selected = semesterSelections[String(sem)][subj] ?? (row.dataset.selected ? Number(row.dataset.selected) : undefined);
+
+                    if (selected == null && existingSemesterGrades[subj] != null) {
+                        selected = existingSemesterGrades[subj];
+                    }
+
+                    if (selected == null && existingRegularGrades[subj] && existingRegularGrades[subj].length > 0) {
+                        selected = existingRegularGrades[subj][existingRegularGrades[subj].length - 1];
+                    }
+
+                    if (selected != null) {
+                        payloads.push({ subject: subj, semester: sem, grade: selected });
+                    }
+                });
+
+                if (payloads.length === 0 && Object.keys(existingSemesterGrades).length > 0) {
+                    customAlert('There are already saved semester grades for this semester. Use "Delete Semester" first if you want to change them.');
+                    return;
+                }
+                if (payloads.length === 0) { customAlert('Select at least one grade to save.'); return; }
+                try {
+                    const res = await fetch(baseOrigin() + '/grades');
+                    const data = await res.json();
+                    const regBySubject = {};
+                    (data.entries || []).forEach(e => {
+                        if (e.type === 'regular' && (e.semester === sem)) {
+                            if (!regBySubject[e.subject]) regBySubject[e.subject] = 0;
+                            regBySubject[e.subject] += 1;
+                        }
+                    });
+                    const lacking = payloads.filter(p => (regBySubject[p.subject] || 0) < 2).map(p => p.subject);
+                    if (lacking.length) {
+                        customAlert('Need at least 2 regular grades before saving final for: ' + lacking.join(', '));
+                        return;
+                    }
+                } catch (e) { }
+                try {
+                    for (const p of payloads) {
+                        const res = await fetch(baseOrigin() + '/save-semester-grade', {
+                            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(p)
+                        });
+                        if (!res.ok) {
+                            const txt = await res.text();
+                            throw new Error(txt || 'Save failed');
+                        }
+                    }
+                    await refreshSummary();
+                    customAlert('Semester saved.');
+                } catch (e) { console.error(e); customAlert('Save semester failed'); }
+            });
+        }
+
+        const deleteAllBtn = document.getElementById('delete-semester-all');
+        if (deleteAllBtn && semesterSelectEl) {
+            deleteAllBtn.addEventListener('click', async () => {
+                const sem = Number(semesterSelectEl.value);
+                customConfirm('Delete all semester-end grades for Semester ' + sem + '?', async () => {
+                    try {
+                        const res = await fetch(baseOrigin() + '/delete-semester-grades', {
+                            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ semester: sem })
+                        });
+                        if (!res.ok) {
+                            const txt = await res.text();
+                            throw new Error(txt || 'Delete failed');
+                        }
+                        await refreshSummary();
+                        customAlert('Semester deleted.');
+                    } catch (e) { console.error(e); customAlert('Delete semester failed'); }
+                });
+            });
+        }
+
+        const deleteAllGradesSemBtn = document.createElement('button');
+        deleteAllGradesSemBtn.className = 'save-semester-btn';
+        deleteAllGradesSemBtn.textContent = 'Delete All Grades (Sem)';
+        const actions = document.querySelector('.semester-actions');
+        if (actions) actions.appendChild(deleteAllGradesSemBtn);
+        if (deleteAllGradesSemBtn && semesterSelectEl) {
+            deleteAllGradesSemBtn.addEventListener('click', async () => {
+                const sem = Number(semesterSelectEl.value);
+                customConfirm('Delete ALL grades (regular and semester) for Semester ' + sem + '?', async () => {
+                    try {
+                        const res = await fetch(baseOrigin() + '/delete-semester-all-grades', {
+                            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ semester: sem })
+                        });
+                        if (!res.ok) {
+                            const txt = await res.text();
+                            throw new Error(txt || 'Delete failed');
+                        }
+                        await refreshSummary();
+                        customAlert('All grades for semester deleted.');
+                    } catch (e) { console.error(e); customAlert('Delete all grades failed'); }
+                });
+            });
+        }
+
+        document.querySelectorAll('[data-action="edit-grade"]').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const row = btn.closest('.subject-row');
+                const subj = row?.dataset?.subject;
+                const sem = Number(document.getElementById('semester-select')?.value || '1');
+                if (!subj) return;
+
+                try {
+                    const res = await fetch(baseOrigin() + '/grades');
+                    if (!res.ok) return;
+                    const data = await res.json();
+                    const subjectGrades = (data.entries || [])
+                        .filter(e => e.subject === subj && e.type === 'regular' && e.semester === sem)
+                        .map(e => e.grade);
+
+                    if (subjectGrades.length === 0) {
+                        customAlert('No grades to edit for ' + subj + ' in Semester ' + sem);
+                        return;
+                    }
+
+                    const alert = document.getElementById('custom-alert');
+                    document.getElementById('alert-title').textContent = 'Edit grade for ' + subj;
+                    const msg = document.getElementById('alert-message');
+                    msg.textContent = 'Current grades: ' + subjectGrades.join(', ') + '\n\nSelect which grade to edit:';
+
+                    const btns = document.getElementById('alert-buttons');
+                    btns.innerHTML = '';
+
+                    const gradeContainer = document.createElement('div');
+                    gradeContainer.className = 'grade-selection-container';
+
+                    subjectGrades.forEach((grade, index) => {
+                        const gradeBtn = document.createElement('button');
+                        gradeBtn.className = 'grade-selection-btn';
+                        gradeBtn.textContent = String(grade);
+                        gradeBtn.style.background = getGradeColor(grade);
+                        gradeBtn.onclick = () => {
+                            showReplacementGradeDialog(subj, sem, index, grade);
+                        };
+                        gradeContainer.appendChild(gradeBtn);
+                    });
+
+                    btns.appendChild(gradeContainer);
+
+                    const cancel = document.createElement('button');
+                    cancel.className = 'alert-btn alert-btn-secondary';
+                    cancel.textContent = 'Cancel';
+                    cancel.onclick = hideAlert;
+                    btns.appendChild(cancel);
+                    alert.classList.add('show');
+
+                } catch (e) {
+                    console.error(e);
+                    customAlert('Failed to load grades');
+                }
+            });
+        });
+
+        function getGradeColor(grade) {
+            const gradeNum = Number(grade);
+            if (gradeNum === 2) return '#ef4444';
+            if (gradeNum === 3) return '#f97316';
+            if (gradeNum === 4) return '#f59e0b';
+            if (gradeNum === 5) return '#10b981';
+            if (gradeNum === 6) return '#3b82f6';
+            return '#64748b';
+        }
+
+        function showReplacementGradeDialog(subject, semester, gradeIndex, currentGrade) {
+            const alert = document.getElementById('custom-alert');
+            document.getElementById('alert-title').textContent = 'Replace grade ' + currentGrade;
+            const msg = document.getElementById('alert-message');
+            msg.textContent = 'Choose new grade for ' + subject + ' (Semester ' + semester + ')';
+
+            const btns = document.getElementById('alert-buttons');
+            btns.innerHTML = '';
+
+            const gradeContainer = document.createElement('div');
+            gradeContainer.className = 'grade-selection-container';
+
+            [2, 3, 4, 5, 6].forEach(grade => {
+                const gradeBtn = document.createElement('button');
+                gradeBtn.className = 'grade-selection-btn';
+                gradeBtn.textContent = String(grade);
+                gradeBtn.style.background = getGradeColor(grade);
+                gradeBtn.onclick = async () => {
+                    hideAlert();
+                    try {
+                        const res = await fetch(baseOrigin() + '/edit-regular-grade', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                subject: subject,
+                                semester: semester,
+                                grade: grade,
+                                grade_index: gradeIndex
+                            })
+                        });
+                        if (!res.ok) {
+                            const txt = await res.text();
+                            throw new Error(txt || 'Edit failed');
+                        }
+                        await refreshSummary();
+                        customAlert('Grade updated from ' + currentGrade + ' to ' + grade);
+                    } catch (e) {
+                        console.error(e);
+                        customAlert('Failed to update grade');
+                    }
+                };
+                gradeContainer.appendChild(gradeBtn);
+            });
+
+            btns.appendChild(gradeContainer);
+
+            const cancel = document.createElement('button');
+            cancel.className = 'alert-btn alert-btn-secondary';
+            cancel.textContent = 'Cancel';
+            cancel.onclick = hideAlert;
+            btns.appendChild(cancel);
+            alert.classList.add('show');
+        }
+
+        document.querySelectorAll('[data-action="delete-subject"]').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const row = btn.closest('.subject-row');
+                if (!row) return;
+                const subj = row.dataset.subject;
+                const sem = document.getElementById('semester-select')?.value || '1';
+                customConfirm('Delete grades for ' + subj + ' in Semester ' + sem + '?', async () => {
+                    try {
+                        const res = await fetch(baseOrigin() + '/delete-subject-grades', {
+                            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ subject: subj, semester: Number(sem) })
+                        });
+                        if (!res.ok) {
+                            const txt = await res.text();
+                            throw new Error(txt || 'Delete failed');
+                        }
+                        if (semesterSelections[sem]) delete semesterSelections[sem][subj];
+                        await refreshSummary();
+                    } catch (err) { console.error(err); customAlert('Delete subject grades failed'); }
+                });
+            });
+        });
+
+        refreshSummary();
+
+        const tabGrades = document.getElementById('tab-grades');
+        const tabWork = document.getElementById('tab-work');
+        const rightPanels = document.querySelector('div[style*="position: absolute; top: 121px; right: 120px"]');
+        const graphsSection = document.querySelector('div[style*="width: 100%; padding: 24px 36px 48px 36px"]');
+
+        if (tabGrades && tabWork) {
+            tabGrades.addEventListener('click', () => {
+                tabGrades.style.background = 'linear-gradient(135deg, #0ea5e9, #6366f1)';
+                tabGrades.style.color = '#fff';
+                tabGrades.style.border = 'none';
+                tabWork.style.background = 'rgba(255, 255, 255, 0.1)';
+                tabWork.style.color = '#b3b8d1';
+                tabWork.style.border = '1px solid rgba(255, 255, 255, 0.2)';
+
+                document.querySelector('.content-wrapper').style.display = 'flex';
+                if (rightPanels) rightPanels.style.display = 'flex';
+                if (graphsSection) graphsSection.style.display = 'block';
+                var workSection = document.getElementById('work-section');
+                if (workSection) workSection.style.display = 'none';
+            });
+
+            tabWork.addEventListener('click', () => {
+                tabWork.style.background = 'linear-gradient(135deg, #0ea5e9, #6366f1)';
+                tabWork.style.color = '#fff';
+                tabWork.style.border = 'none';
+                tabGrades.style.background = 'rgba(255, 255, 255, 0.1)';
+                tabGrades.style.color = '#b3b8d1';
+                tabGrades.style.border = '1px solid rgba(255, 255, 255, 0.2)';
+
+                document.querySelector('.content-wrapper').style.display = 'none';
+                if (rightPanels) rightPanels.style.display = 'none';
+                if (graphsSection) graphsSection.style.display = 'none';
+                var workSection = document.getElementById('work-section');
+                if (workSection) workSection.style.display = 'block';
+            });
+        }
+
+        let chartSem1 = null, chartSem2 = null, chartYear = null;
+        async function renderCharts() {
+            try {
+                const res = await fetch(baseOrigin() + '/grades');
+                if (!res.ok) return;
+                const data = await res.json();
+                const sem1 = [], sem2 = [], year = [];
+                (data.entries || []).forEach(e => {
+                    if (e.type === 'regular') {
+                        const g = Number(e.grade);
+                        if (String(e.semester) === '1') sem1.push(g);
+                        if (String(e.semester) === '2') sem2.push(g);
+                        year.push(g);
+                    }
+                });
+
+                const ctx1 = document.getElementById('chart-sem1')?.getContext('2d');
+                const ctx2 = document.getElementById('chart-sem2')?.getContext('2d');
+                const ctxY = document.getElementById('chart-year')?.getContext('2d');
+
+                const makeConfig = (label, dataArr, color) => ({
+                    type: 'line',
+                    data: {
+                        labels: dataArr.map((_, i) => i + 1),
+                        datasets: [{
+                            label,
+                            data: dataArr,
+                            borderColor: color,
+                            backgroundColor: color + '33',
+                            tension: 0.25,
+                            fill: true,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { suggestedMin: 2, suggestedMax: 6, ticks: { stepSize: 1 } },
+                            x: { ticks: { color: '#9fb0d8' } }
+                        }
+                    }
+                });
+
+                if (ctx1) {
+                    if (chartSem1) chartSem1.destroy();
+                    chartSem1 = new Chart(ctx1, makeConfig('Sem I', sem1, '#3b82f6'));
+                }
+                if (ctx2) {
+                    if (chartSem2) chartSem2.destroy();
+                    chartSem2 = new Chart(ctx2, makeConfig('Sem II', sem2, '#10b981'));
+                }
+                if (ctxY) {
+                    if (chartYear) chartYear.destroy();
+                    chartYear = new Chart(ctxY, makeConfig('Year', year, '#6366f1'));
+                }
+            } catch (_) { }
+        }
+
+        renderCharts();
+        const origRefresh = refreshSummary;
+        refreshSummary = async function () { await origRefresh(); await renderCharts(); };
+    </script>
+
+    <div id="work-section" style="display:none;">
+        <div class="page">
+            <h1>Work Uploads</h1>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:16px;">
+
+                <div class="average-card">
+                    <h2 style="font-size:16px; margin-bottom:12px;">Mathematics</h2>
+                    <input type="file" id="math-upload" class="file-upload" multiple>
+                    <label for="math-upload" class="file-upload-label">Choose Files</label>
+                </div>
+
+                <div class="average-card">
+                    <h2 style="font-size:16px; margin-bottom:12px;">Mathematics RP</h2>
+                    <input type="file" id="math-rp-upload" class="file-upload" multiple>
+                    <label for="math-rp-upload" class="file-upload-label">Choose Files</label>
+                </div>
+
+                <div class="average-card">
+                    <h2 style="font-size:16px; margin-bottom:12px;">Bulgarian Language</h2>
+                    <input type="file" id="bulgarian-upload" class="file-upload" multiple>
+                    <label for="bulgarian-upload" class="file-upload-label">Choose Files</label>
+                </div>
+
+                <div class="average-card">
+                    <h2 style="font-size:16px; margin-bottom:12px;">CHEP</h2>
+                    <input type="file" id="chep-upload" class="file-upload" multiple>
+                    <label for="chep-upload" class="file-upload-label">Choose Files</label>
+                </div>
+
+                <div class="average-card">
+                    <h2 style="font-size:16px; margin-bottom:12px;"></h2>
+                    <input type="file" id="math-upload" class="file-upload" multiple>
+                    <label for="math-upload" class="file-upload-label">Choose Files</label>
+                </div>
+
+                <div class="average-card">
+                    <h2 style="font-size:16px; margin-bottom:12px;">CHEP</h2>
+                    <input type="file" id="math-upload" class="file-upload" multiple>
+                    <label for="math-upload" class="file-upload-label">Choose Files</label>
+                </div>
+
+                <div class="average-card">
+                    <h2 style="font-size:16px; margin-bottom:12px;">CHEP</h2>
+                    <input type="file" id="math-upload" class="file-upload" multiple>
+                    <label for="math-upload" class="file-upload-label">Choose Files</label>
+                </div>
+
+                <div class="average-card">
+                    <h2 style="font-size:16px; margin-bottom:12px;">CHEP</h2>
+                    <input type="file" id="math-upload" class="file-upload" multiple>
+                    <label for="math-upload" class="file-upload-label">Choose Files</label>
+                </div>
+
+                <div class="average-card">
+                    <h2 style="font-size:16px; margin-bottom:12px;">CHEP</h2>
+                    <input type="file" id="math-upload" class="file-upload" multiple>
+                    <label for="math-upload" class="file-upload-label">Choose Files</label>
+                </div>
+
+                <div class="average-card">
+                    <h2 style="font-size:16px; margin-bottom:12px;">CHEP</h2>
+                    <input type="file" id="math-upload" class="file-upload" multiple>
+                    <label for="math-upload" class="file-upload-label">Choose Files</label>
+                </div>
+
+            </div>
+            <div style="text-align:right;margin-top:24px;">
+                <button class="save-semester-btn">Upload</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

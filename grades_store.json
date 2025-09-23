@@ -1,0 +1,944 @@
+[
+  {
+    "subject": "Mathematics",
+    "grade": 5.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Mathematics",
+    "grade": 4.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Mathematics",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Mathematics",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Mathematics RP",
+    "grade": 4.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Mathematics RP",
+    "grade": 3.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Mathematics RP",
+    "grade": 3.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Mathematics RP",
+    "grade": 2.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Bulgarian Language",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Bulgarian Language",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Bulgarian Language",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "CHEP",
+    "grade": 5.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "CHEP",
+    "grade": 5.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "CHEP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "CHEP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "VMKS Coding",
+    "grade": 5.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "VMKS Coding",
+    "grade": 5.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "VMKS Coding",
+    "grade": 5.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "VMKS Coding SP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "VMKS Coding SP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "VMKS Coding SP",
+    "grade": 5.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "UI Design",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "UI Design",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "UI Design",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "IoT",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "IoT",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "IoT",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "IoT SP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "IoT SP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "IoT SP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "PE",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "PE",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "PE",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Computer Graphics SP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Computer Graphics SP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Computer Graphics SP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Computer Graphics",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Computer Graphics",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Computer Graphics",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Internet Coding SP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Internet Coding SP",
+    "grade": 5.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Internet Coding SP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Internet Coding SP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Internet Coding",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Internet Coding",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Internet Coding",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Internet Coding",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Software Engineering SP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Software Engineering SP",
+    "grade": 5.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Software Engineering SP",
+    "grade": 4.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Software Engineering SP",
+    "grade": 5.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Citizen Education",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Citizen Education",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Citizen Education",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Software Engineering",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Software Engineering",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Software Engineering",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Software Engineering",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 1
+  },
+  {
+    "subject": "Mathematics",
+    "grade": 6.0,
+    "type": "semester",
+    "semester": 1
+  },
+  {
+    "subject": "Mathematics RP",
+    "grade": 2.0,
+    "type": "semester",
+    "semester": 1
+  },
+  {
+    "subject": "Bulgarian Language",
+    "grade": 6.0,
+    "type": "semester",
+    "semester": 1
+  },
+  {
+    "subject": "CHEP",
+    "grade": 6.0,
+    "type": "semester",
+    "semester": 1
+  },
+  {
+    "subject": "VMKS Coding",
+    "grade": 5.0,
+    "type": "semester",
+    "semester": 1
+  },
+  {
+    "subject": "VMKS Coding SP",
+    "grade": 5.0,
+    "type": "semester",
+    "semester": 1
+  },
+  {
+    "subject": "UI Design",
+    "grade": 6.0,
+    "type": "semester",
+    "semester": 1
+  },
+  {
+    "subject": "IoT",
+    "grade": 6.0,
+    "type": "semester",
+    "semester": 1
+  },
+  {
+    "subject": "IoT SP",
+    "grade": 6.0,
+    "type": "semester",
+    "semester": 1
+  },
+  {
+    "subject": "Citizen Education",
+    "grade": 6.0,
+    "type": "semester",
+    "semester": 1
+  },
+  {
+    "subject": "Software Engineering",
+    "grade": 6.0,
+    "type": "semester",
+    "semester": 1
+  },
+  {
+    "subject": "Software Engineering SP",
+    "grade": 5.0,
+    "type": "semester",
+    "semester": 1
+  },
+  {
+    "subject": "Internet Coding",
+    "grade": 6.0,
+    "type": "semester",
+    "semester": 1
+  },
+  {
+    "subject": "Internet Coding SP",
+    "grade": 6.0,
+    "type": "semester",
+    "semester": 1
+  },
+  {
+    "subject": "Computer Graphics",
+    "grade": 6.0,
+    "type": "semester",
+    "semester": 1
+  },
+  {
+    "subject": "Computer Graphics SP",
+    "grade": 6.0,
+    "type": "semester",
+    "semester": 1
+  },
+  {
+    "subject": "PE",
+    "grade": 6.0,
+    "type": "semester",
+    "semester": 1
+  },
+  {
+    "subject": "Mathematics",
+    "grade": 3.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Mathematics",
+    "grade": 2.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Mathematics RP",
+    "grade": 4.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Mathematics RP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Mathematics RP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Mathematics",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Mathematics",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Bulgarian Language",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Bulgarian Language",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Bulgarian Language",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "CHEP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "CHEP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "CHEP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "VMKS Coding",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "VMKS Coding",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "VMKS Coding",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "VMKS Coding",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "VMKS Coding SP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "VMKS Coding SP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "VMKS Coding SP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "VMKS Coding SP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "UI Design",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "UI Design",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "UI Design",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "UI Design",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "IoT",
+    "grade": 5.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "IoT",
+    "grade": 4.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "IoT",
+    "grade": 5.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "IoT",
+    "grade": 5.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "IoT SP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "IoT SP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "IoT SP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "IoT SP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "IoT SP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Citizen Education",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Citizen Education",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Citizen Education",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Citizen Education",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Software Engineering",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Software Engineering",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Software Engineering",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Software Engineering",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Software Engineering SP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Software Engineering SP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Software Engineering SP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Software Engineering SP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Internet Coding",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Internet Coding",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Internet Coding",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Internet Coding",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "PE",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "PE",
+    "grade": 5.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "PE",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "PE",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Computer Graphics SP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Computer Graphics",
+    "grade": 5.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Computer Graphics",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Computer Graphics",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Computer Graphics",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Internet Coding SP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Internet Coding SP",
+    "grade": 5.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Internet Coding SP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Internet Coding SP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Computer Graphics SP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Computer Graphics SP",
+    "grade": 6.0,
+    "type": "regular",
+    "semester": 2
+  },
+  {
+    "subject": "Mathematics",
+    "grade": 6.0,
+    "type": "semester",
+    "semester": 2
+  },
+  {
+    "subject": "Mathematics RP",
+    "grade": 6.0,
+    "type": "semester",
+    "semester": 2
+  },
+  {
+    "subject": "Bulgarian Language",
+    "grade": 6.0,
+    "type": "semester",
+    "semester": 2
+  },
+  {
+    "subject": "CHEP",
+    "grade": 6.0,
+    "type": "semester",
+    "semester": 2
+  },
+  {
+    "subject": "VMKS Coding",
+    "grade": 6.0,
+    "type": "semester",
+    "semester": 2
+  },
+  {
+    "subject": "VMKS Coding SP",
+    "grade": 6.0,
+    "type": "semester",
+    "semester": 2
+  },
+  {
+    "subject": "UI Design",
+    "grade": 6.0,
+    "type": "semester",
+    "semester": 2
+  },
+  {
+    "subject": "IoT",
+    "grade": 5.0,
+    "type": "semester",
+    "semester": 2
+  },
+  {
+    "subject": "IoT SP",
+    "grade": 6.0,
+    "type": "semester",
+    "semester": 2
+  },
+  {
+    "subject": "Citizen Education",
+    "grade": 6.0,
+    "type": "semester",
+    "semester": 2
+  },
+  {
+    "subject": "Software Engineering",
+    "grade": 6.0,
+    "type": "semester",
+    "semester": 2
+  },
+  {
+    "subject": "Software Engineering SP",
+    "grade": 6.0,
+    "type": "semester",
+    "semester": 2
+  },
+  {
+    "subject": "Internet Coding",
+    "grade": 6.0,
+    "type": "semester",
+    "semester": 2
+  },
+  {
+    "subject": "Internet Coding SP",
+    "grade": 6.0,
+    "type": "semester",
+    "semester": 2
+  },
+  {
+    "subject": "Computer Graphics",
+    "grade": 6.0,
+    "type": "semester",
+    "semester": 2
+  },
+  {
+    "subject": "Computer Graphics SP",
+    "grade": 6.0,
+    "type": "semester",
+    "semester": 2
+  },
+  {
+    "subject": "PE",
+    "grade": 6.0,
+    "type": "semester",
+    "semester": 2
+  }
+]
