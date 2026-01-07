@@ -1,12 +1,66 @@
 from flask import Flask, render_template, request, jsonify
 import json
 import os
+from urllib.parse import quote
+
+import requests
 
 app = Flask(__name__)
 
-STORE = os.path.join(os.path.dirname(__file__), 'grades_store.json')
+KV_REST_API_URL = os.getenv('KV_REST_API_URL') or os.getenv('UPSTASH_REDIS_REST_URL')
+KV_REST_API_TOKEN = os.getenv('KV_REST_API_TOKEN') or os.getenv('UPSTASH_REDIS_REST_TOKEN')
+USE_KV = bool(KV_REST_API_URL and KV_REST_API_TOKEN)
+KV_KEY = 'grades:entries'
+
+IS_VERCEL = os.getenv('VERCEL') == '1' or bool(os.getenv('VERCEL_ENV'))
+DEFAULT_STORE = os.path.join(os.path.dirname(__file__), 'grades_store.json')
+STORE = os.path.join('/tmp', 'grades_store.json') if IS_VERCEL and not USE_KV else DEFAULT_STORE
+
+
+def _kv_request(method, path):
+    if not USE_KV:
+        return None
+    base = KV_REST_API_URL.rstrip('/')
+    url = f'{base}/{path}'
+    headers = {'Authorization': f'Bearer {KV_REST_API_TOKEN}'}
+    try:
+        return requests.request(method, url, headers=headers, timeout=5)
+    except Exception:
+        return None
+
+
+def _kv_get_json(key):
+    if not USE_KV:
+        return None
+    key_encoded = quote(key, safe='')
+    resp = _kv_request('GET', f'get/{key_encoded}')
+    if not resp or resp.status_code != 200:
+        return None
+    try:
+        payload = resp.json()
+    except Exception:
+        return None
+    result = payload.get('result')
+    if result is None:
+        return None
+    try:
+        return json.loads(result)
+    except Exception:
+        return None
+
+
+def _kv_set_json(key, value):
+    if not USE_KV:
+        return False
+    payload = json.dumps(value, ensure_ascii=False)
+    path = f'set/{quote(key, safe="")}/{quote(payload, safe="")}'
+    resp = _kv_request('POST', path)
+    return bool(resp and resp.status_code == 200)
 
 def read_store():
+    if USE_KV:
+        data = _kv_get_json(KV_KEY)
+        return data if isinstance(data, list) else []
     if not os.path.exists(STORE):
         return []
     try:
@@ -17,6 +71,9 @@ def read_store():
 
 
 def write_store(data):
+    if USE_KV:
+        _kv_set_json(KV_KEY, data)
+        return
     with open(STORE, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
